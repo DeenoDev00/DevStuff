@@ -39,10 +39,11 @@ public class TicTacModel {
         }
         int row = position / 3;
         int col = position % 3;
-
+        //Här ska första testet göras
         if (board[row][col] == null) {
             board[row][col] = currentPlayer.getSymbol();
 
+            //Här kontorlleras vinnaren
             String winner = checkWinner();
             if (!winner.isEmpty()) {
                 if (winner.equals("X")) {
@@ -139,12 +140,6 @@ public class TicTacModel {
         resetScores();// Reset the scores as well
         gameStatus = GameStatus.ONGOING;
     }
-
-//    public void resetBoard() {
-//        board = new String[3][3]; // Reset the board
-//        currentPlayer = Players.PLAYER_X; // Reset the current player to X
-//        gameStatus = GameStatus.ONGOING; // Ensure the game status is ongoing
-//    }
 
     public void resetScores() {
         playerXScore = 0;
