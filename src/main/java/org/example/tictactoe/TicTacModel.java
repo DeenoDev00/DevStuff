@@ -1,139 +1,138 @@
 package org.example.tictactoe;
 
-import javafx.fxml.FXML;
-import static org.example.tictactoe.Players.*;
 
 public class TicTacModel {
-    private Players[][] board = new Players[3][3];
-    private Players currentPlayer = PLAYER_X;
-    private boolean isGameOver;
-    private String statusMessage;
-    private int computerWins;
-    private int playerWins;
+    private String[][] board;
+    private Players currentPlayer;
+    private GameStatus gameStatus;
+    private int playerXScore; // Score for Player X
+    private int playerOScore; // Score for Player O
 
     public TicTacModel() {
-        resetBoard();
+        resetGame(); // Ensure the game is initialized correctly
     }
 
     public void resetGame() {
-        currentPlayer = PLAYER_X;
-        playerWins = 0;
-        computerWins = 0;
+        resetBoard();
+        resetScores(); // Reset the scores as well
+        gameStatus = GameStatus.ONGOING;
     }
 
-    public void resetBoard(){
-        board = new Players[3][3];
-        currentPlayer = PLAYER_X;
-        isGameOver = false;
-        statusMessage = "Player X's turn";
-    }
-
-    public void updateScore(Players winner){
-        if (winner == PLAYER_X){
-            playerWins++;
-        }
-        else if (winner ==PLAYER_O){
-            computerWins++;
-        }
-    }
-
-    public int getPlayerWins(){
-        return playerWins;
-    }
-
-    public int getComputerWins(){
-        return computerWins;
-    }
-
-    public Players getCurrentPlayer() {
-        return currentPlayer;
-    }
-
-    public Players checkGameStatus(){
-        Players winner = checkWinner();
-        if(winner != null){
-            return winner.PLAYER_X;
-        }
-        return isBoardFull() ? "draw" : "";
-    }
-
-    public void setGameOver(boolean gameOver) {
-        this.isGameOver = gameOver;
-    }
-
-    public boolean isGameOver() {
-        return this.isGameOver;
-    }
-
-    public String getStatusMessage() {
-        return statusMessage;
+    public void resetBoard() {
+        board = new String[3][3]; // Reset the board
+        currentPlayer = Players.PLAYER_X; // Reset the current player to X
+        gameStatus = GameStatus.ONGOING; // Ensure the game status is ongoing
     }
 
     public void updateBoard(int position) {
-        if (isGameOver){
-            return;
+        if (gameStatus != GameStatus.ONGOING) {
+            return; // Prevent actions if the game is not ongoing
         }
         int row = position / 3;
         int col = position % 3;
+
         if (board[row][col] == null) {
-            board[row][col] = currentPlayer;
+            board[row][col] = currentPlayer.getSymbol();
 
-            Players winner = checkWinner();
-            if (winner != null) {
-                isGameOver = true;
-                statusMessage = winner.name() + " won!";
+            String winner = checkWinner();
+            if (!winner.isEmpty()) {
+                if (winner.equals("X")) {
+                    gameStatus = GameStatus.X_WINS;
+                    playerXScore++; // Increment Player X's score
+                } else {
+                    gameStatus = GameStatus.O_WINS;
+                    playerOScore++; // Increment Player O's score
+                }
             } else if (isBoardFull()) {
-                isGameOver = true;
-                statusMessage = "Draw";
-
+                gameStatus = GameStatus.DRAW;
             } else {
-                currentPlayer = (currentPlayer == PLAYER_X) ? PLAYER_O : PLAYER_X;
-                statusMessage = currentPlayer.name() + "'s turn";
+                currentPlayer = (currentPlayer == Players.PLAYER_X) ? Players.PLAYER_O : Players.PLAYER_X;
             }
-
         }
     }
 
-    public Players checkWinner() {
+    public int getPlayerXScore() {
+        return playerXScore;
+    }
+    public int getPlayerOScore() {
+        return playerOScore;
+    }
+
+
+    public GameStatus checkGameStatus() {
+        String winner = checkWinner();
+        if (!winner.isEmpty()) {
+            return winner.equals("X") ? GameStatus.X_WINS : GameStatus.O_WINS;
+        } else if (isBoardFull()) {
+            return GameStatus.DRAW;
+        }
+        return GameStatus.ONGOING;
+    }
+
+    public String checkWinner() {
         for (int i = 0; i < 3; i++) {
+            // Check rows and columns
             if (board[i][0] != null && board[i][0].equals(board[i][1]) && board[i][1].equals(board[i][2])) {
-                isGameOver = true;
-                statusMessage = board[i][0] + " won!";
                 return board[i][0];
             }
             if (board[0][i] != null && board[0][i].equals(board[1][i]) && board[1][i].equals(board[2][i])) {
-                isGameOver = true;
-                statusMessage = board[0][i] + " won!";
                 return board[0][i];
             }
         }
+        // Check diagonals
         if (board[0][0] != null && board[0][0].equals(board[1][1]) && board[1][1].equals(board[2][2])) {
-            isGameOver = true;
-            statusMessage = board[0][0] + " won!";
             return board[0][0];
         }
         if (board[0][2] != null && board[0][2].equals(board[1][1]) && board[1][1].equals(board[2][0])) {
-            isGameOver = true;
-            statusMessage = board[0][2] + " won!";
             return board[0][2];
         }
-        if (isBoardFull()) {
-            isGameOver = true;
-            statusMessage = "It's a draw!";
-            return null;
-        }
-        return null;
+        return ""; // No winner
     }
 
     public boolean isBoardFull() {
-        for (int i = 0; i < 3; i++) {
-            for (int j = 0; j < 3; j++) {
-                if (board[i][j] == null) {
+        for (String[] row : board) {
+            for (String cell : row) {
+                if (cell == null) {
                     return false;
                 }
             }
         }
         return true;
+    }
+
+    public void computerMove() {
+        if (currentPlayer == Players.PLAYER_O && gameStatus == GameStatus.ONGOING) {
+            // Basic logic: find the first available spot
+            for (int i = 0; i < 3; i++) {
+                for (int j = 0; j < 3; j++) {
+                    if (board[i][j] == null) {
+                        board[i][j] = currentPlayer.getSymbol();
+                        checkGameStatus(); // Check if this move wins or draws
+                        currentPlayer = Players.PLAYER_X; // Switch back to player
+                        return; // Exit after making a move
+                    }
+                }
+            }
+        }
+    }
+
+
+
+    public Players getCurrentPlayer() {
+        return currentPlayer;
+    }
+
+    public String[][] getBoard() {
+        return board; // Return the 2D array
+    }
+
+    public GameStatus getGameStatus() {
+        return gameStatus; // Expose the current game status
+    }
+
+    public void resetScores() {
+        playerXScore = 0;
+        playerOScore = 0;
     }
 }
 
