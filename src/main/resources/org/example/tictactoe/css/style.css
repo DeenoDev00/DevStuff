@@ -1,0 +1,55 @@
+/* style.css */
+
+/* Bakgrundsfärg för hela fönstret */
+.root {
+    -fx-background-color: black;
+}
+
+/* Stil för texten, ger den en grön Matrix-liknande färg */
+.label, .button {
+    -fx-text-fill: #00ff00; /* Grön färg för text */
+    -fx-font-weight: bold;
+    -fx-font-family: "Courier New"; /* Monospaced font för en "hacker"-look */
+}
+
+/* Knapparnas utseende */
+.button {
+    -fx-background-color: #101010; /* Mörkare grå bakgrund för knapparna */
+    -fx-border-color: #00ff00; /* Grön kantlinje för att likna Matrix-tema */
+    -fx-border-width: 2px;
+    -fx-border-radius: 5px;
+    -fx-background-radius: 5px;
+    -fx-effect: dropshadow(gaussian, #00ff00, 10, 0.5, 0, 0); /* Grön skugga för extra glow-effekt */
+    -fx-font-family: "Courier New"; /* Samma font för enhetligt utseende */
+}
+
+/* Hover-effekt på knapparna */
+.button:hover {
+    -fx-background-color: #1a1a1a; /* Ljusa upp knapparna lite när musen är över dem */
+    -fx-border-color: #33ff33; /* En ljusare grön färg på kantlinjen vid hover */
+    -fx-effect: dropshadow(gaussian, #33ff33, 15, 0.7, 0, 0); /* Större glow-effekt vid hover */
+}
+
+/* Stil för att ge cellerna en Matrix-inspirerad animation (kan användas för text) */
+@keyframes matrix-glow {
+    0% { -fx-text-fill: #003300; }
+    50% { -fx-text-fill: #00ff00; }
+    100% { -fx-text-fill: #003300; }
+}
+
+/* Applicera animation på spelets statusmeddelanden */
+.status-label {
+    -fx-text-fill: #00ff00; /* Grön färg */
+    -fx-font-size: 16px;
+    -fx-font-family: "Courier New";
+    -fx-animation: matrix-glow 2s infinite;
+}
+
+/* Stil för spelplanens bakgrundsfärg */
+.grid-pane {
+    -fx-background-color: black;
+    -fx-padding: 10px;
+    -fx-hgap: 5px;
+    -fx-vgap: 5px;
+}
+
