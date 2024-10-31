@@ -117,7 +117,11 @@ public class TicTacModel {
                 for (int j = 0; j < 3; j++) {
                     if (board[i][j] == null) {
                         board[i][j] = currentPlayer.getSymbol();
-                        checkGameStatus(); // Check if this move wins or draws
+                        gameStatus = checkGameStatus(); // Check if this move wins or draws
+                        if (gameStatus == GameStatus.O_WINS) {
+                            playerOScore++;
+                            return;
+                        }
                         currentPlayer = Players.PLAYER_X; // Switch back to player
                         return; // Exit after making a move
                     }

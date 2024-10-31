@@ -66,6 +66,7 @@ public class TicTacController {
     @FXML
     public void handleButtonClick(ActionEvent event) {
         if (model.getGameStatus() != GameStatus.ONGOING) {
+            disableAllButtons();
             return; // Prevent any further actions if the game is not ongoing
         }
 
@@ -96,6 +97,7 @@ public class TicTacController {
         model.computerMove();
         updateBoardUI();
         updateStatusMessage();
+        model.checkGameStatus();
         if (model.getGameStatus() != GameStatus.ONGOING) {
             disableAllButtons();
         }
@@ -114,7 +116,7 @@ public class TicTacController {
     }
 
     private void updateStatusMessage() {
-        GameStatus currentStatus = model.checkGameStatus(); // Call the model's method
+        GameStatus currentStatus = model.checkGameStatus();// Call the model's method
         statusMessage.setText(currentStatus.getMessage());
         updateWinsDisplay(); // Update the win count based on the current status
         currentPlayerLabel.setText("Current Player: " + model.getCurrentPlayer().getSymbol());
